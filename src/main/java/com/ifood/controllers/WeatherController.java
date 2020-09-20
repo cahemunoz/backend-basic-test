@@ -20,13 +20,11 @@ public class WeatherController {
 	private WeatherService weatherService;
 
 	@GetMapping
-	
 	public ResponseEntity<WeatherMap> getWeather(@RequestParam(value = "city") String city) {
 		
 		Optional<WeatherMap> weatherMap = Optional.ofNullable(weatherService.getWeather(city));
 		
 		return weatherMap.map(ResponseEntity::ok)
 				.orElseGet(() -> ResponseEntity.notFound().build());
-
 	}
 }

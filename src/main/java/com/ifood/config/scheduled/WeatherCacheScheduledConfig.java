@@ -33,10 +33,10 @@ public class WeatherCacheScheduledConfig {
 
 		cacheManager.setCaches(Arrays.asList(
 				new ConcurrentMapCache(Constants.CACHE_WEATHERS, CacheBuilder.newBuilder()
-																	.expireAfterWrite(30, TimeUnit.MINUTES)
-																	.maximumSize(100)
-																	.build()
-																	.asMap(), true)));
+						.expireAfterWrite(30, TimeUnit.MINUTES)
+						.maximumSize(100)
+						.build()
+						.asMap(), true)));
 
 		return cacheManager;
 	}
@@ -45,7 +45,9 @@ public class WeatherCacheScheduledConfig {
 	@CacheEvict(allEntries = true, value = {Constants.CACHE_WEATHERS})
 	@Scheduled(fixedDelay = 10000 * 6, initialDelay = 500) 
 	public void clearCacheEvict() { 
-			log.info("Cache limpo em {}!",
-					LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+			log.info("Cache limpo em {}!", LocalDateTime
+					.now()
+					.format(DateTimeFormatter
+							.ofPattern("dd/MM/yyyy HH:mm:ss")));
 	}
 }
