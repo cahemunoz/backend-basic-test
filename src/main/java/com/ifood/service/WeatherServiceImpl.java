@@ -5,8 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.interceptor.SimpleKey;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -34,9 +33,9 @@ public class WeatherServiceImpl implements WeatherService {
 	@Autowired
 	private CacheManager cacheManager;
 	
-	@Cacheable(value = {Constants.CACHE_WEATHERS})
+	@CachePut(value = {Constants.CACHE_WEATHERS}, key="#city")
 	@HystrixCommand(fallbackMethod = "defaultGetWeather", commandProperties = {
-			@HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds",         value = "20000"),
+			@HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds",         value = "10000"),
 			@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
 			@HystrixProperty(name = "circuitBreaker.errorThresholdPercentage",          value = "10") })
 	@Override
@@ -55,10 +54,10 @@ public class WeatherServiceImpl implements WeatherService {
 		log.info("Consultando API (CACHE) := " + api 
 				+ ", Cidade := " + city);
 		
-	    if (null != cacheManager.getCache(Constants.CACHE_WEATHERS) 
-	    		&& null != cacheManager.getCache(Constants.CACHE_WEATHERS).get(SimpleKey.EMPTY)) {
+	    if (null != cacheManager.getCache(Constants.CACHE_WEATHERS)
+	    		&& null != cacheManager.getCache(Constants.CACHE_WEATHERS).get(city)) {
 	        return cacheManager.getCache(Constants.CACHE_WEATHERS)
-	        		.get(SimpleKey.EMPTY, WeatherMap.class);
+	        		.get(city, WeatherMap.class);
 	    } else {
 	        return null;
 	    }
